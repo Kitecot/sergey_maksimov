@@ -1,1 +1,12 @@
+---
+# handlers file for nginx_w_roles
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
 
+- name: reload nginx
+  systemd:
+    name: nginx
+    state: reloaded
