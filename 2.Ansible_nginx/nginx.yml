@@ -1,0 +1,60 @@
+---
+- name: NGINX | Install and configure NGINX
+  hosts: nginx
+  become: true
+  vars:
+    nginx_listen_port: 8080
+
+  tasks:
+    - name: NGINX | Install EPEL Repo package from standart repo
+      yum:
+        name: epel-release
+        state: present
+      tags:
+        - epel-package
+        - packages
+
+    - name: NGINX | Install NGINX package from EPEL Repo
+      yum:
+        name: nginx
+        state: latest
+      notify:
+        - restart nginx
+      tags:
+        - nginx-package
+        - packages
+    
+    - name: add HTTP to firewall
+      ansible.posix.firewalld:
+        zone: public
+        service: http
+        permanent: true
+        state: enabled 
+   
+    - name: add port 8080 to firewall
+      ansible.posix.firewalld:
+        port: 8080/tcp
+        state: enabled 
+        immediate: true
+        permanent: true
+
+    - name: NGINX | Create NGINX config file from template
+      template:
+        src: ./nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - reload nginx
+      tags:
+        - nginx-configuration
+
+  handlers:
+    - name: restart nginx
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: yes
+    
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded
