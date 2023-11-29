@@ -36,8 +36,7 @@ sdg      8:96   0  512M  0 disk
 sdh      8:112  0  512M  0 disk 
 sdi      8:128  0  512M  0 disk 
 ```
-Создаём пул из двух дисков в режиме RAID 1:
-Создадим ещё 3 пула: 
+Создадим 4 пула: 
 ```
 [root@zfs ~]# zpool create otus1 mirror /dev/sdb /dev/sdc
 [root@zfs ~]# zpool create otus2 mirror /dev/sdd /dev/sde
